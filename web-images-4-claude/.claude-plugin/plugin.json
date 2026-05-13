@@ -1,0 +1,9 @@
+{
+  "name": "web-images-4-claude",
+  "version": "0.3.0",
+  "description": "Source free open-use images from the internet and a curated icon library in multiple colors for website builds.",
+  "author": {
+    "name": "Eagle Digital Designs"
+  },
+  "keywords": ["images", "icons", "web design", "unsplash", "pexels", "heroicons", "lucide", "stock photos", "svg icons"]
+}
