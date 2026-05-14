@@ -50,11 +50,19 @@ zip -r ../web-images-4-claude.plugin . -x "*.DS_Store"
 
 **Windows (PowerShell):**
 ```powershell
-Push-Location web-images-4-claude
-Compress-Archive -Path ".\*" -DestinationPath "$env:TEMP\web-images-4-claude.zip" -Force
-Pop-Location
-Copy-Item "$env:TEMP\web-images-4-claude.zip" ".\web-images-4-claude.plugin" -Force
+# Use .NET ZipFile — Compress-Archive produces backslash paths that Claude rejects
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$pluginDir  = "web-images-4-claude"
+$outputPath = "web-images-4-claude.plugin"
+if (Test-Path $outputPath) { Remove-Item $outputPath -Force }
+$zip = [System.IO.Compression.ZipFile]::Open($outputPath, 'Create')
+Get-ChildItem -Recurse -File $pluginDir | ForEach-Object {
+    $entry = $_.FullName.Substring((Resolve-Path $pluginDir).Path.Length + 1).Replace('\', '/')
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $entry, 'Optimal') | Out-Null
+}
+$zip.Dispose()
 ```
+> **Note:** Do not use `Compress-Archive` for `.plugin` files on Windows — it writes backslash paths inside the zip which Claude will reject with "invalid characters".
 
 ---
 
